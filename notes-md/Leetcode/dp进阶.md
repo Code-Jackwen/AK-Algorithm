@@ -51,34 +51,21 @@
 子序列是由数组派生而来的序列，删除（或不删除）数组中的元素而不改变其余元素的顺序。
 例如，[3,6,2,7] 是数组 [0,3,1,6,2,2,7] 的子序列。
 
-示例 1：
-
 输入：nums = [10,9,2,5,3,7,101,18]
 输出：4
 解释：最长递增子序列是 [2,3,7,101]，因此长度为 4 。
-示例 2：
 
 输入：nums = [0,1,0,3,2,3]
 输出：4
-示例 3：
 
 输入：nums = [7,7,7,7,7,7,7]
 输出：1
 
-示例 4：
 [4,10,4,3,8,9]
 3
-示例 5：
 [3,5,6,2,5,4,19,5,6,7,12]  
 6 
-
-提示：
-1 <= nums.length <= 2500
--104 <= nums[i] <= 104
-
-进阶：
-你可以设计时间复杂度为 O(n2) 的解决方案吗？
-你能将算法的时间复杂度降低到 #O(nlog(n)) 吗?
+进阶：你能将算法的时间复杂度降低到 #O(nlog(n)) 吗?
 ```
 
 1
@@ -118,16 +105,14 @@ class Solution {
             }						    //dp[j] + 1是在比自己小的那位的比自己小的个数+1
             res = Math.max(res, dp[i]);
         }
-        return res;//
+        return res;
     }
 }
 ```
 
-```
+```js
 res = Math.max(res, dp[i]); 处理如下
-
 输入：[1,3,6,7,9,4,10,5,6]
-
 输出：[1, 2, 3, 4, 5, 3, 6, 4, 5]
 ```
 
@@ -148,7 +133,6 @@ public int lengthOfLIS(int[] nums) {
     }
     return Arrays.stream(dp).max().orElse(0);
 }
-
 ```
 
 使用 Stream 求最大值会导致运行时间过长，可以改成以下形式：
@@ -159,7 +143,6 @@ for (int i = 0; i < n; i++) {
     ret = Math.max(ret, dp[i]);
 }
 return ret;
-
 ```
 
 以上解法的时间复杂度为 O(N<sup>2</sup>)，可以使用二分查找将时间复杂度降低为 O(NlogN)。
@@ -178,7 +161,6 @@ tails      len      num
 [3]        1        6
 [3,6]      2        5
 [3,5]      2        null
-
 ```
 
 可以看出 tails 数组保持有序，因此在查找 S<sub>i</sub> 位于 tails 数组的位置时就可以使用二分查找。
@@ -205,21 +187,20 @@ private int binarySearch(int[] tails, int len, int key) {
         if (key == tails[mid]) {
             return mid;
         } else if (key < tails[mid]) {
-            h = mid;			//
+            h = mid;			
         } else {
             l = mid + 1;
         }
     }
     return l;
 }
-
 ```
 
-### 2. 一组整数对能够构成的最长链
+### 2. 最长上升数对链
 
 类似题目参考：
 
-https://leetcode-cn.com/problems/maximum-length-of-pair-chain/solution/chuan-shang-yi-fu-wo-jiu-bu-ren-shi-ni-liao-lai--2/
+ [穿上衣服我就不认识你了？来聊聊最长上升子序列 - 最长数对链 - 力扣（LeetCode） (leetcode-cn.com)](https://leetcode-cn.com/problems/maximum-length-of-pair-chain/solution/chuan-shang-yi-fu-wo-jiu-bu-ren-shi-ni-liao-lai--2/) 
 
 作者力扣题解仓库：https://github.com/azl397985856/leetcode
 
@@ -228,8 +209,7 @@ https://leetcode-cn.com/problems/maximum-length-of-pair-chain/solution/chuan-sha
 [Leetcode](https://leetcode.com/problems/maximum-length-of-pair-chain/description/) / [646. 最长数对链](https://leetcode-cn.com/problems/maximum-length-of-pair-chain/)
 
 ```js
-给出 n 个数对。 在每一个数对中，第一个数字总是比第二个数字小。
-现在，我们定义一种跟随关系，当且仅当 b < c 时，数对(c, d) 才可以跟在 (a, b) 后面。我们用这种形式来构造一个数对链。
+给出 n 个数对。 在每一个数对中，第一个数字总是比第二个数字小。现在，我们定义一种跟随关系，当且仅当 b < c 时，数对(c, d) 才可以跟在 (a, b) 后面。我们用这种形式来构造一个数对链。
 给定一个数对集合，找出能够形成的最长数对链的长度。
 你不需要用到所有的数对，你可以以任何顺序选择其中的一些数对来构造。
 
@@ -239,7 +219,6 @@ https://leetcode-cn.com/problems/maximum-length-of-pair-chain/solution/chuan-sha
 解释：最长的数对链是 [1,2] -> [3,4]
 
 提示：给出数对的个数在 [1, 1000] 范围内。#注意：b < c
-
 ```
 
 题目描述：对于 (a, b) 和 (c, d) ，如果 b \< c，则它们可以构成一条链。
@@ -251,13 +230,7 @@ https://leetcode-cn.com/problems/maximum-length-of-pair-chain/solution/chuan-sha
 class Solution {
     public int findLongestChain(int[][] pairs) {
         if (pairs.length == 1) return 1;
-        // Arrays.sort(pairs, new Comparator<int[]>() {
-        //     @Override
-        //     public int compare(int[] o1, int[] o2) {
-        //         return o1[1] - o2[1];
-        //     }
-        // });
-        Arrays.sort(pairs, (o1, o2) -> o1[1] - o2[1]);
+        Arrays.sort(pairs, (o1, o2) -> o1[1] - o2[1]);	//对数对的第二位升序排序
         int chainTail = pairs[0][1];					//记录数对的第2位
         int res = 1;
         for (int i = 1; i < pairs.length; i++) {		
@@ -269,58 +242,26 @@ class Solution {
         return res;
     }
 }
-
 ```
 
-
-
 ```java
-//其他49ms、50%
-class Solution {
-    public int findLongestChain(int[][] pairs) {
-        if (pairs == null || pairs.length == 0) {
-            return 0;
-        }
-        Arrays.sort(pairs, (a, b) -> (a[0] - b[0]));
-        int n = pairs.length;
-        int[] dp = new int[n];
-        Arrays.fill(dp, 1);
-        for (int i = 1; i < n; i++) {
-            for (int j = 0; j < i; j++) {
-                if (pairs[j][1] < pairs[i][0]) {
-                    dp[i] = Math.max(dp[i], dp[j] + 1);
-                }
+//其他49ms、50%	不推荐
+public int findLongestChain(int[][] pairs) {
+    if (pairs == null || pairs.length == 0) return 0;
+    Arrays.sort(pairs, (a, b) -> (a[0] - b[0]));	//按照第一列排序
+    int n = pairs.length;
+    int[] dp = new int[n];
+    Arrays.fill(dp, 1);
+    for (int i = 1; i < n; i++) {
+        for (int j = 0; j < i; j++) {
+            if (pairs[j][1] < pairs[i][0]) {
+                dp[i] = Math.max(dp[i], dp[j] + 1);
             }
         }
-        return Arrays.stream(dp).max().orElse(0);
-        //orElse(0)需要加，否则 OptionalInt cannot be converted to int
     }
-
-    //二维数组排序Demo：Arrays.sort(pairs, (a, b) -> (a[0] - b[0]));
-    public static void main(String[] args) {
-        int[][] nums = new int[][]{{1, 3}, {1, 2}, {4, 5}, {3, 7}};
-        Arrays.sort(nums, new Comparator<int[]>() {
-            public int compare(int[] a, int[] b) {
-                if (a[0] == b[0]) {
-                    return a[1] - b[1];
-                } else {
-                    return a[0] - b[0];
-                }
-            }
-        });
-        for (int i = 0; i < nums.length; i++) {
-            System.out.println(Arrays.toString(nums[i]));
-        }
-        /*输出：
-            [1, 2]
-            [1, 3]
-            [3, 7]
-            [4, 5]
-        */
-    }
-
+    return Arrays.stream(dp).max().orElse(0);
+    //orElse(0)需要加，否则 OptionalInt cannot be converted to int
 }
-
 ```
 
 ### 3. 最长摆动子序列
@@ -338,29 +279,21 @@ class Solution {
 
 给定一个整数序列，返回作为摆动序列的最长子序列的长度。 通过从原始序列中删除一些（也可以不删除）元素来获得子序列，剩下的元素保持其原始顺序。
 
-示例 1:
 输入: [1,7,4,9,2,5]
 输出: 6 
 解释: 整个序列均为摆动序列。
 
-示例 2:
 输入: [1,17,5,10,13,15,10,5,16,8]
 输出: 7
 解释: 这个序列包含几个长度为 7 摆动序列，其中一个可为[1,17,10,13,10,16,8]。负正交替出现的。
 
-示例 3:
-输入: [1,2,3,4,5,6,7,8,9]
-输出: 2
+输入: [1,2,3,4,5,6,7,8,9]、或者[0,1]、或者[1,2]
+输出: 都返回2
 
 示例 4:
 [0,0]
 1
-
-[0,1]、[1,2]
-2
-
 进阶：你能否用 O(n) 时间复杂度完成此题?
-
 ```
 
 贪心： [376. 摆动序列:【贪心经典题目】详解 - 摆动序列 - 力扣（LeetCode） (leetcode-cn.com)](https://leetcode-cn.com/problems/wiggle-subsequence/solution/376-bai-dong-xu-lie-tan-xin-jing-dian-ti-vyxt/) 
@@ -368,74 +301,47 @@ class Solution {
 <img src="../../assets/1618466759212.png" alt="1618466759212" style="zoom: 67%;" />
 
 ```java
-//0ms，100%
-class Solution {
-    public int wiggleMaxLength (int[] nums) {
-        if (nums.length <= 1) return nums.length;
-        int curDiff = 0; 			// 当前一对差值
-        int preDiff = 0; 			// 前一对差值
-        int ret = 1;  				// 记录峰值个数，序列默认序列最右边有一个峰值
-        for (int i = 1; i < nums.length; i++) {
-            curDiff = nums[i] - nums[i - 1];
-            // 出现峰值，preDiff <= 0为了处理 [0,1]、[1,2]
-            if ((curDiff > 0 && preDiff <= 0) || (curDiff < 0 && preDiff >= 0)) {
-                ret++;
-                preDiff = curDiff;
-            }
+//0ms，100% 推荐
+public int wiggleMaxLength (int[] nums) {
+    if (nums.length <= 1) return nums.length;
+    int curDiff = 0; 			// 当前一对差值
+    int preDiff = 0; 			// 前一对差值
+    int ret = 1;  				// 记录峰值个数，序列默认序列最右边有一个峰值
+    for (int i = 1; i < nums.length; i++) {
+        curDiff = nums[i] - nums[i - 1];
+        if ((curDiff > 0 && preDiff <= 0) || (curDiff < 0 && preDiff >= 0)) {
+            ret++;
+            preDiff = curDiff;
         }
-        return ret;
     }
+    return ret;
 }
 ```
 
-dp参考：
+```js
+//[1,7,4,9,2,5] 都没有等号
+//1
+//6
 
-https://leetcode-cn.com/problems/wiggle-subsequence/solution/tan-xin-si-lu-qing-xi-er-zheng-que-de-ti-jie-by-lg/
+//[1,7,4,9,2,5] 只有后边的的等号
+//5
+//6
+```
+
+dp参考： [贪心思路 清晰而正确的题解 - 摆动序列 - 力扣（LeetCode） (leetcode-cn.com)](https://leetcode-cn.com/problems/wiggle-subsequence/solution/tan-xin-si-lu-qing-xi-er-zheng-que-de-ti-jie-by-lg/) 
 
 方程：
 
-![1618462582931](../../assets/1618462582931.png)
+<img src="../../assets/1618462582931.png" alt="1618462582931" style="zoom: 80%;" />
 
 案例：
 
-<img src="../../assets/1617540883020.png" alt="1617540883020" style="zoom:67%;" />
-
-
+<img src="../../assets/1617540883020.png" alt="1617540883020" style="zoom: 67%;" />
 
 ```java
-//双O(N)
-class Solution {
-    public int wiggleMaxLength(int[] nums) {
-        int n = nums.length;
-        if (n < 2) return n;
-        int[] up = new int[n];
-        int[] down = new int[n];
-        up[0] = down[0] = 1;
-        for (int i = 1; i < n; i++) {
-            if (nums[i] > nums[i - 1]) {
-                up[i] = Math.max(up[i - 1], down[i - 1] + 1);
-                down[i] = down[i - 1];
-            } else if (nums[i] < nums[i - 1]) {
-                up[i] = up[i - 1];
-                down[i] = Math.max(up[i - 1] + 1, down[i - 1]);
-            } else {
-                up[i] = up[i - 1];
-                down[i] = down[i - 1];
-            }
-        }
-        return Math.max(up[n - 1], down[n - 1]);
-    }
-}
-
-```
-
-```java
-//其他
-//优化空间到O(1)
+//其他、优化空间到O(1)
 public int wiggleMaxLength(int[] nums) {
-    if (nums == null || nums.length == 0) {
-        return 0;
-    }
+    if (nums == null || nums.length == 0) return 0;
     int up = 1, down = 1;
     for (int i = 1; i < nums.length; i++) {
         if (nums[i] > nums[i - 1]) {
@@ -446,7 +352,6 @@ public int wiggleMaxLength(int[] nums) {
     }
     return Math.max(up, down);
 }
-
 ```
 
 ## 最长公共子序列
@@ -487,26 +392,17 @@ public int wiggleMaxLength(int[] nums) {
 例如，"ace" 是 "abcde" 的子序列，但 "aec" 不是 "abcde" 的子序列。
 两个字符串的 公共子序列 是这两个字符串所共同拥有的子序列。
 
-
-示例 1：
-
 输入：text1 = "abcde", text2 = "ace" 
 输出：3  
 解释：最长公共子序列是 "ace" ，它的长度为 3 。
-示例 2：
 
 输入：text1 = "abc", text2 = "abc"
 输出：3
 解释：最长公共子序列是 "abc" ，它的长度为 3 。
-示例 3：
 
 输入：text1 = "abc", text2 = "def"
 输出：0
 解释：两个字符串没有公共子序列，返回 0 。
- 
-提示：
-1 <= text1.length, text2.length <= 1000
-text1 和 text2 仅由小写英文字符组成。
 ```
 
 方程：
@@ -540,6 +436,8 @@ class Solution {
 
 [1085 背包问题（0-1背包模板题） - 0一叶0知秋0 - 博客园 (cnblogs.com)](https://www.cnblogs.com/yi-ye-zhi-qiu/p/7554736.html) 
 
+[2. 01背包问题 - AcWing题库](https://www.acwing.com/problem/content/2/) 
+
 有一个容量为 N 的背包，要用这个背包装下物品的价值最大，这些物品有两个属性：体积 w 和价值 v。
 
 定义一个二维数组 dp 存储最大价值，其中 **dp\[i][j] 表示前 i 件物品体积不超过 j 的情况下能达到的最大价值**。
@@ -558,45 +456,52 @@ class Solution {
 
 <img src="../../assets/1618483688158.png" alt="1618483688158" style="zoom: 80%;" />
 
-执行图：
+```java
+// N 为物品数量
+// W 为背包总体积
+// weights 数组存储 N 个物品的重量
+// values  数组存储 N 个物品的价值
+public int[][] knapsack(int W, int N, int[] weights, int[] values) {
+    int[][] dp = new int[N + 1][W + 1];
+    for (int i = 1; i <= N; i++) {				//允许的物品个数，在外边
+        int w = weights[i - 1], v = values[i - 1];
+        for (int j = 1; j <= W; j++) {			//允许的重量，在里面
+            if (j >= w) { 						//能放进时，放与不放取最值
+                dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - w] + v);
+            } else {
+                dp[i][j] = dp[i - 1][j];		//空间不够，放不进去，状态延续。
+            }
+        }
+    }	 // dp[i-1][j-w]，前一个状态，移出去w空间后（状态价值）+价值后，和前一个状态取最值。
+    return dp;
+}
+```
 
-![1618480354127](../../assets/1618480354127.png)
+未优化核心代码
 
 ```java
-public class Solution {
-    public static void main(String[] args) {
-        int[][] arr = knapsack(5, 4, new int[]{2, 1, 3, 2}, new int[]{3, 2, 4, 2});
-        print(arr);
-    }
-    // W 为背包总体积
-    // N 为物品数量
-    // weights 数组存储 N 个物品的重量
-    // values 数组存储 N 个物品的价值
-    public static int[][] knapsack(int W, int N, int[] weights, int[] values) {
-        int[][] dp = new int[N + 1][W + 1];
-        for (int i = 1; i <= N; i++) {				//允许的物品个数
-            int w = weights[i - 1], v = values[i - 1];
-            for (int j = 1; j <= W; j++) {			//允许的空间个数
-                if (j >= w) { 
-                    dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - w] + v);
-                } else {
-                    dp[i][j] = dp[i - 1][j];		//空间不够，放不进去，状态延续。
-                }
-            }
-        }	 // dp[i-1][j-w]，前一个状态，移出去w空间后（状态价值）+价值后，和前一个状态取最值。
-        return dp;
-    }
+dp[i][j] = dp[i - 1][j];
+if (j >= w) dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - w] + v);
+```
 
-    public static void print(int[][] arr) {
-        for (int i = 0; i < arr.length; i++) {
-            for (int j = 0; j < arr[0].length; j++) {
-                System.out.print(arr[i][j] + " ");
-            }
-            System.out.println();
+```java
+public static void main(String[] args) {
+     int[][] arr = knapsack(5, 4, new int[]{2, 1, 3, 2}, new int[]{3, 2, 4, 2});
+     print(arr);//7
+}
+public static void print(int[][] arr) {
+    for (int i = 0; i < arr.length; i++) {
+        for (int j = 0; j < arr[0].length; j++) {
+            System.out.print(arr[i][j] + " ");
         }
+        System.out.println();
     }
 }
 ```
+
+执行图：
+
+![1618480354127](../../assets/1618480354127.png)
 
 **空间优化**  
 
@@ -609,15 +514,15 @@ public class Solution {
 
 也就是说要先计算 dp\[i][j] 再计算 dp\[i][j-w]，在程序实现时需要按倒序来循环求解。
 
+### 0-1 背包最终版
+
 ```java
 public int knapsack(int W, int N, int[] weights, int[] values) {
-    int[] dp = new int[W + 1];
+    int[] dp = new int[W + 1];								//只保留列
     for (int i = 1; i <= N; i++) {
         int w = weights[i - 1], v = values[i - 1];
-        for (int j = W; j >= 1; j--) {
-            if (j >= w) {
-                dp[j] = Math.max(dp[j], dp[j - w] + v);
-            }
+        for (int j = W; j >= w; j--) {						//反序遍历
+            dp[j] = Math.max(dp[j], dp[j - w] + v);			//if判断缩到for循环里
         }
     }
     return dp[W];
@@ -634,17 +539,17 @@ public int knapsack(int W, int N, int[] weights, int[] values) {
 | 1    | 2    | 10   | 5    |
 | 2    | 3    | 12   | 4    |
 
-**变种**  
+### **背包变种**  
 
-- 完全背包：物品数量为无限个
+- **完全背包：物品数量为无限个**
 
-- 多重背包：物品数量有限制
+- **多重背包：物品数量有限制**
 
-- 多维费用背包：物品不仅有重量，还有体积，同时考虑这两种限制
+- **多维费用背包**：物品不仅有重量，还有体积，同时考虑这两种**限制**
 
-- 其它：物品之间相互约束或者依赖
+- 其它：**物品之间相互约束或者依赖**
 
-### 1. 划分数组为和相等的两部分
+### 1. 划分数组为和相等的两子集
 
 416\. Partition Equal Subset Sum (Medium)
 
@@ -654,17 +559,13 @@ public int knapsack(int W, int N, int[] weights, int[] values) {
 给定一个只包含正整数的非空数组。是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。
 #注意:每个数组中的元素不会超过 100、数组的大小不会超过 200
 
-
-示例 1:
 输入: [1, 5, 11, 5]
 输出: true
 解释: 数组可以分割成 [1, 5, 5] 和 [11].
  
-示例 2:
 输入: [1, 2, 3, 5]
 输出: false
 解释: 数组不能分割成两个元素和相等的子集.
-
 ```
 
 <img src="../../assets/1618483330164.png" alt="1618483330164" style="zoom:80%;" />
@@ -685,15 +586,15 @@ Demo过程：
 
 1
 
-<img src="../../assets/1618484576179.png" alt="1618484576179" style="zoom:80%;" />
+<img src="../../assets/1618484576179.png" alt="1618484576179" style="zoom: 67%;" />
 
 2
 
-<img src="../../assets/1618484707220.png" alt="1618484707220" style="zoom:80%;" />
+<img src="../../assets/1618484707220.png" alt="1618484707220" style="zoom: 67%;" />
 
 3、
 
-<img src="../../assets/1618490829291.png" alt="1618490829291" style="zoom:80%;" />
+<img src="../../assets/1618490829291.png" alt="1618490829291" style="zoom: 67%;" />
 
 优化前
 
@@ -701,25 +602,25 @@ Demo过程：
 //42ms,50%
 class Solution {
     public boolean canPartition(int[] nums) {
-        int n = nums.length;
-        if (n < 2) return false;
+        int len = nums.length;
+        if (len < 2) return false;
         int sum = 0, maxNum = 0;
         for (int num : nums) {
             sum += num;
             maxNum = Math.max(maxNum, num);
         }
-        if (sum % 2 != 0) return false;
-        int w = sum / 2;							//w也可以理解为tar
-        if (maxNum > w) return false;
+        if (sum % 2 != 0) return false;				//总和不是偶数不可以
+        int w = sum / 2;							//w也可以理解为tar、sum
+        if (maxNum > w) return false;				//最大的1个值比sum/2大不可以
 
-        boolean[][] dp = new boolean[n][w + 1];
+        boolean[][] dp = new boolean[len][w + 1];
         //一、
-        //for (int i = 0; i < n; i++) {				//第一列，边界处理
+        //for (int i = 0; i < len; i++) {				//第一列，边界处理
         //    dp[i][0] = true;
         //}
         //二、
         dp[0][nums[0]] = true;						//初始化第一行，其他的值都为默认false
-        for (int i = 1; i < n; i++) {
+        for (int i = 1; i < len; i++) {
             int num = nums[i];
             for (int j = 0; j <= w; j++) {			//三、
                 if (j >= num) {
@@ -729,7 +630,7 @@ class Solution {
                 }
             }
         }
-        return dp[n - 1][w];
+        return dp[len - 1][w];
     }
 }
 //细节：初始化，用二、其实就可以了，
@@ -740,34 +641,30 @@ class Solution {
 
 ```java
 //22ms,88%
-class Solution {
-    public boolean canPartition(int[] nums) {
-        int sum = computeArraySum(nums);
-        if (sum % 2 != 0) {					   // nums元素总和必须为偶数才可以分
-            return false;
+public boolean canPartition(int[] nums) {
+    int sum = computeArraySum(nums);
+    if (sum % 2 != 0) {	return false; }	   //nums元素总和必须为偶数才可以分
+    int W = sum / 2;
+    boolean[] dp = new boolean[W + 1];
+    dp[0] = true;
+    for (int num : nums) {                 //0-1 背包一个物品只能用一次
+        for (int i = W; i >= num; i--) {   //从后往前，先计算 dp[i] 再计算 dp[i-num]
+            dp[i] = dp[i] || dp[i - num];
         }
-        int W = sum / 2;
-        boolean[] dp = new boolean[W + 1];
-        dp[0] = true;
-        for (int num : nums) {                 // 0-1 背包一个物品只能用一次
-            for (int i = W; i >= num; i--) {   // 从后往前，先计算 dp[i] 再计算 dp[i-num]
-                dp[i] = dp[i] || dp[i - num];
-            }
-        }
-        return dp[W];
     }
+    return dp[W];
+}
 
-    private int computeArraySum(int[] nums) {
-        int sum = 0;
-        for (int num : nums) {
-            sum += num;
-        }
-        return sum;
+private int computeArraySum(int[] nums) {
+    int sum = 0;
+    for (int num : nums) {
+        sum += num;
     }
+    return sum;
 }
 ```
 
-### 2. 改变一组数的正负号使得它们的和为一给定数
+### 2. 改变正负号使得和为定数的方法
 
 494\. Target Sum (Medium)
 
@@ -793,7 +690,6 @@ class Solution {
 数组非空，且长度不会超过 20 。
 初始的数组的和不会超过 1000 。
 保证返回的最终结果能被 32 位整数存下。
-
 ```
 
 该问题可以转换为 Subset Sum 问题，从而使用 0-1 背包的方法来求解。
@@ -802,41 +698,36 @@ class Solution {
 
 可以将这组数看成两部分，P 和 N，其中 P 使用正号，N 使用负号，有以下推导：
 
-```html
+```js
                   sum(P) - sum(N) = target
 sum(P) + sum(N) + sum(P) - sum(N) = target + sum(P) + sum(N)
                        2 * sum(P) = target + sum(nums)
-
 ```
 
 因此只要找到一个子集，令它们都取正号，并且和等于 (target + sum(nums))/2，就证明存在解。
 
 ```java
 //2ms,100%
-class Solution {
-    public int findTargetSumWays(int[] nums, int S) {
-        int sum = computeArraySum(nums);
-        if (sum < S || (sum + S) % 2 == 1) {
-            return 0;
+public int findTargetSumWays(int[] nums, int S) {
+    int sum = computeArraySum(nums);
+    if (sum < S || (sum + S) % 2 == 1) return 0;	//奇数或者目标值太大
+    int W = (sum + S) / 2;
+    int[] dp = new int[W + 1];
+    dp[0] = 1;
+    for (int num : nums) {
+        for (int i = W; i >= num; i--) {			//i >= num i从num开始，省略里面的判断
+            dp[i] = dp[i] + dp[i - num];
         }
-        int W = (sum + S) / 2;
-        int[] dp = new int[W + 1];
-        dp[0] = 1;
-        for (int num : nums) {
-            for (int i = W; i >= num; i--) {
-                dp[i] = dp[i] + dp[i - num];
-            }
-        }
-        return dp[W];
     }
+    return dp[W];
+}
 
-    private int computeArraySum(int[] nums) {
-        int sum = 0;
-        for (int num : nums) {
-            sum += num;
-        }
-        return sum;
+private int computeArraySum(int[] nums) {
+    int sum = 0;
+    for (int num : nums) {
+        sum += num;
     }
+    return sum;
 }
 ```
 
@@ -844,20 +735,20 @@ DFS 解法（枚举）：
 
 ```java
 //652ms,18%
-class Solution {
-    public int findTargetSumWays(int[] nums, int S) {
-        return findTargetSumWays(nums, 0, S);
-    }
+public int findTargetSumWays(int[] nums, int S) {
+    return findTargetSumWays(nums, 0, S);
+}
 
-    private int findTargetSumWays(int[] nums, int start, int S) {
-        if (start == nums.length) {
-            return S == 0 ? 1 : 0;
-        }
-        return findTargetSumWays(nums, start + 1, S + nums[start])
-         + findTargetSumWays(nums, start + 1, S - nums[start]);
+private int findTargetSumWays(int[] nums, int start, int S) {
+    if (start == nums.length) {
+        return S == 0 ? 1 : 0;
     }
+    return findTargetSumWays(nums, start + 1, S + nums[start])
+         + findTargetSumWays(nums, start + 1, S - nums[start]);
 }
 ```
+
+### 多维费用 - 多限制背包
 
 ### 3. 01 字符构成最多的字符串
 
@@ -871,51 +762,218 @@ class Solution {
 如果 x 的所有元素也是 y 的元素，集合 x 是集合 y 的 子集 。
 #题目转述：求最大子集
 
-示例 1：
 输入：strs = ["10", "0001", "111001", "1", "0"], m = 5, n = 3
 输出：4
 解释：最多有 5 个 0 和 3 个 1 的最大子集是 {"10","0001","1","0"} ，因此答案是 4 。
 其他满足题意但较小的子集包括 {"0001","1"} 和 {"10","1","0"} 。{"111001"} 不满足题意，因为它含 4 个 1 ，大于 n 的值 3 。
 
-示例 2：
 输入：strs = ["10", "0", "1"], m = 1, n = 1
 输出：2
 解释：最大的子集是 {"0", "1"} ，所以答案是 2 。
-
-提示：
-1 <= strs.length <= 600
-1 <= strs[i].length <= 100
-strs[i] 仅由 '0' 和 '1' 组成
-1 <= m, n <= 100
-
 ```
 
 这是一个多维费用的 0-1 背包问题，有两个背包大小，0 的数量和 1 的数量。
 
+参考：[动态规划（转换为 0-1 背包问题） - 一和零 - 力扣（LeetCode） (leetcode-cn.com)](https://leetcode-cn.com/problems/ones-and-zeroes/solution/dong-tai-gui-hua-zhuan-huan-wei-0-1-bei-bao-wen-ti/) 
+
+官解是优化后的： [一和零 - 一和零 - 力扣（LeetCode） (leetcode-cn.com)](https://leetcode-cn.com/problems/ones-and-zeroes/solution/yi-he-ling-by-leetcode/) 
+
+思路：把总共的 0 和 1 的个数视为背包的容量，每一个字符串视为装进背包的物品。这道题就可以使用 0-1 背包问题的思路完成，这里的目标值是能放进背包的字符串的数量。
+
+动态规划的思路是：物品一个一个尝试，容量一点一点尝试，每个物品分类讨论的标准是：选与不选。
+
+定义状态：尝试题目问啥，就把啥定义成状态。dp\[i]\[j][k] 表示输入字符串在子区间 [0, i] 能够使用 j 个 0 和 k 个 1 的字符串的最大数量。
+
+初始化：为了避免分类讨论，通常多设置一行。这里可以认为，第 0 个字符串是空串。第 0 行默认初始化为 0。
+输出：输出是最后一个状态，即：dp\[len]\[m][n]。
+
+方程：
+
+![1619259900366](../../../ZJW-Summary/assets/1619259900366.png)
+
 ```java
-public int findMaxForm(String[] strs, int m, int n) {
-    if (strs == null || strs.length == 0) {
-        return 0;
-    }
-    int[][] dp = new int[m + 1][n + 1];
-    for (String s : strs) {    // 每个字符串只能用一次
-        int ones = 0, zeros = 0;
-        for (char c : s.toCharArray()) {
-            if (c == '0') {
-                zeros++;
-            } else {
-                ones++;
+//74ms,27%
+class Solution {
+    public int findMaxForm(String[] strs, int m, int n) {
+        int M = m + 1;
+        int N = n + 1;
+        // dp[插入/不插入第i个字符串][m个1][n个0] 组合最多的字符串数量
+        int[][][] dp = new int[strs.length + 1][M][N];
+        for (int k = 1; k < strs.length + 1; k++) {
+            String str = strs[k - 1];
+            int zeroCnt = getZeroCount(str);
+            int oneCnt = str.length() - zeroCnt;
+            for (int i = 0; i < M; i++) {
+                for (int j = 0; j < N; j++) {
+                    dp[k][i][j] = dp[k - 1][i][j];		 // 先把上一行抄下来
+                    if (i >= zeroCnt && j >= oneCnt) {
+                        dp[k][i][j] = Math.max(dp[k][i][j],
+                         			  dp[k - 1][i - zeroCnt][j - oneCnt] + 1);
+                    }
+                    //dp[k][i][j] = Math.max(dp[k - 1][i][j], dp[k][i][j]);
+                }
             }
         }
-        for (int i = m; i >= zeros; i--) {
-            for (int j = n; j >= ones; j--) {
+        return dp[strs.length][m][n];
+    }
+    public int getZeroCount(String s) {
+        int zeros = 0;
+        for (char c : s.toCharArray()) {
+            if (c == '0') zeros++;
+        }
+        return zeros;
+    }
+}
+```
+
+空间优化后
+
+```java
+//空间优化后，33ms，82%
+public int findMaxForm(String[] strs, int m, int n) {
+    if (strs == null || strs.length == 0) return 0;
+    int[][] dp = new int[m + 1][n + 1];
+    for (String s : strs) {    					// 每个字符串只能用一次
+        int ones = 0, zeros = 0;
+        for (char c : s.toCharArray()) {
+            if (c == '0') zeros++;
+            else ones++;
+        }
+        for (int i = m; i >= zeros; i--) {		//优化后，倒着的
+            for (int j = n; j >= ones; j--) {	//优化后，倒着的
                 dp[i][j] = Math.max(dp[i][j], dp[i - zeros][j - ones] + 1);
             }
         }
     }
     return dp[m][n];
 }
+```
 
+## 完全背包
+
+[3. 完全背包问题 - AcWing题库](https://www.acwing.com/problem/content/3/) 
+
+原始的「完全背包」：要求不超过容积为 amount 的背包，让我们求的是总价值最多。
+
+有 N件物品和一个容量是 V 的背包。每件物品只能使用一次，每种物品都有无限件可用。第 i 件物品的体积是 w[i]
+，价值是 v[i]。求将哪些物品装入背包，可使这些物品的总体积不超过背包容量，且总价值最大。输出最大价值。
+
+**分析**：「完全背包问题」的重点在于：每种物品都有无限件可用，且不计算顺序。
+
+**状态**：`dp[i][j]` 表示考虑物品区间 `[0, i]` 里，不超过背包容量，能够获得的最大价值； 
+
+```js
+方程：dp[i][j] = max(dp[i−1][j] , dp[i−1][j− k × w[i]] + k × v[i])		这里 k>= 0
+```
+
+**复杂度分析**：
+
+说明：这一版代码的时间复杂度很高，使用了三重循环，**有重复计算**。 
+
+- 时间复杂度：O(NW^2)，这里 N 是背包价值数组的长度，W 是背包的容量；
+- 空间复杂度：O(NW)。
+
+```java
+//原始版本
+public static int[][] npack(int W, int N, int[] weights, int[] values) {
+    int[][] dp = new int[N + 1][W + 1];
+    for (int i = 1; i <= N; i++) {
+        int w = weights[i - 1], v = values[i - 1];
+        for (int j = 0; j <= W; j++) {//j从1开始也对
+            for (int k = 0; k * w <= j; k++) {
+                dp[i][j] = Math.max(dp[i][j], dp[i - 1][j - k * w] + k * v);
+            }
+            //dp[i][j] = dp[i - 1][j];
+            //if (j - w >= 0) dp[i][j] = Math.max(dp[i][j], dp[i][j - w] + v);
+        }
+    }
+    return dp;
+}
+```
+
+优化掉里面的for循环，原理是不断使用前面已经更新过的 f \[ i ][ 前面体积 ]来更新 f \[ i ][ 后面的体积 j ] 
+
+```java
+//优化掉里面的for循环
+public static int[][] npack(int W, int N, int[] weights, int[] values) {
+    int[][] dp = new int[N + 1][W + 1];
+    for (int i = 1; i <= N; i++) {
+        int w = weights[i - 1], v = values[i - 1];
+        for (int j = 0; j <= W; j++) {
+            dp[i][j] = dp[i - 1][j];
+            if (j - w >= 0) dp[i][j] = Math.max(dp[i][j], dp[i][j - w] + v);
+        }
+    }
+    return dp;
+}
+```
+
+对比01背包
+
+```java
+public int[][] knapsack(int W, int N, int[] weights, int[] values) {
+    int[][] dp = new int[N + 1][W + 1];
+    for (int i = 1; i <= N; i++) {				
+        int w = weights[i - 1], v = values[i - 1];
+        for (int j = 1; j <= W; j++) {	
+            dp[i][j] = dp[i - 1][j];		
+            if (j >= w) dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - w] + v);
+        }
+    }	 
+    return dp;
+}
+```
+
+核心代码只有一行不同，对比：
+
+```java
+未去掉二维时，前提都有：dp[i][j] = dp[i - 1][j];
+
+f[i][j] = max(f[i][j],f[i-1][j-w]+v);		//未去掉二维的01背包
+f[i][j] = max(f[i][j],  f[i][j-w]+v);		//未去掉二维的完全背包问题
+
+for (int j = W; j >= 1; j--) {				//去掉二维的01背包
+    if (j >= w) dp[j] = Math.max(dp[j], dp[j - w] + v);		
+}
+
+for (int j = 1; j <= W; j++) {				//去掉二维的完全背包问题
+    if (j >= w) dp[j] = Math.max(dp[j], dp[j - w] + v);		
+}
+
+if缩到for循环里，进而只是，01背包反序遍历，完全背包正序遍历的区别。
+    
+for (int j = W; j >= w; j--) {						//反序遍历
+    dp[j] = Math.max(dp[j], dp[j - w] + v);			//01背包问题
+}
+    
+for (int j = w; j <= W; j++) {						//正序遍历
+    dp[j] = Math.max(dp[j], dp[j - w] + v);			//完全背包问题
+}	
+```
+
+### 完全背包，最终版本
+
+```java
+public static int[] npack(int W, int N, int[] weights, int[] values) {
+    int[] dp = new int[W + 1];							//只保留列
+    for (int i = 1; i <= N; i++) {
+        int w = weights[i - 1], v = values[i - 1];
+        for (int j = w; j <= W; j++) {					//从j从w开始，正序遍历
+            dp[j] = Math.max(dp[j], dp[j - w] + v);		//完全背包问题
+        }
+    }
+    return dp;
+}
+```
+
+```java
+//测试
+public static void main(String[] args) {
+    int N = 4, W = 5;
+    int[] weights = {1, 2, 3, 4}, values = {2, 4, 4, 5};
+    int[][] dp = npack(W, N, weights, values);
+    print(dp);//10	[0, 2, 4, 6, 8, 10]
+}
 ```
 
 ### 4. 找零钱的最少硬币数
@@ -928,24 +986,14 @@ public int findMaxForm(String[] strs, int m, int n) {
 给定不同面额的硬币 coins 和一个总金额 amount。编写一个函数来计算可以凑成总金额所需的最少的硬币个数。
 如果没有任何一种硬币组合能组成总金额，返回 -1。你可以认为每种硬币的数量是无限的。
 
-示例 1：
-
 输入：coins = [1, 2, 5], amount = 11
-输出：3 
-解释：11 = 5 + 5 + 1
-示例 2：
+输出：3 	解释：11 = 5 + 5 + 1
 
 输入：coins = [2], amount = 3
 输出：-1
-示例 3：
 
 输入：coins = [1], amount = 0
 输出：0
-
-提示：
-1 <= coins.length <= 12
-1 <= coins[i] <= 231 - 1
-0 <= amount <= 104
 ```
 
 题目描述：给一些面额的硬币，要求用这些硬币来组成给定面额的钱数，并且使得硬币数量最少。
@@ -955,14 +1003,20 @@ public int findMaxForm(String[] strs, int m, int n) {
 - 物品大小：面额
 - 物品价值：数量
 
-因为硬币可以重复使用，因此这是一个完全背包问题。完全背包只需要将 0-1 背包的逆序遍历 dp 数组改为正序遍历即可。
+因为硬币可以重复使用，因此这是一个**完全背包问题**。
+
+**完全背包只需要将 0-1 背包的逆序遍历 dp 数组改为正序遍历即可。**
+
+- 要求恰好填满容积为 amount 的背包，重点是「恰好」，而原始的「完全背包」问题只是要求「不超过」；
+- 题目问的是总的硬币数最少，原始的「完全背包」问题让我们求的是总价值最多。
 
 ```java
-public int coinChange(int[] coins, int amount) {
-    if (amount == 0 || coins == null) return 0;
-    int[] dp = new int[amount + 1];
+//20ms,31%
+public int coinChange(int[] coins, int sum) {
+    if (sum == 0 || coins == null) return 0;
+    int[] dp = new int[sum + 1];
     for (int coin : coins) {
-        for (int i = coin; i <= amount; i++) { //将逆序遍历改为正序遍历
+        for (int i = coin; i <= sum; i++) { //将逆序遍历改为正序遍历
             if (i == coin) {
                 dp[i] = 1;
             } else if (dp[i] == 0 && dp[i - coin] != 0) {
@@ -972,7 +1026,7 @@ public int coinChange(int[] coins, int amount) {
             }
         }
     }
-    return dp[amount] == 0 ? -1 : dp[amount];
+    return dp[sum] == 0 ? -1 : dp[sum];
 }
 ```
 
