@@ -16,7 +16,7 @@
 
  [二分查找 的各种模板 - AcWing](https://www.acwing.com/blog/content/6926/) 
 
-
+ 
 
  [刷题中一些常用的C++语法（持续更新） - AcWing](https://www.acwing.com/blog/content/47/) 
 
