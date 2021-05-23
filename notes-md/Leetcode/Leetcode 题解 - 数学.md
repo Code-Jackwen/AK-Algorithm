@@ -30,9 +30,17 @@
 
 ## 素数分解
 
+**质数**：1 自身不是 一个素数(又叫质数), 所以首批的一些素数是 2, 3, 5, 7, 11, 13, … 
+
 每一个数都可以分解成素数的乘积，例如 84 = 2<sup>2</sup> \* 3<sup>1</sup> \* 5<sup>0</sup> \* 7<sup>1</sup> \* 11<sup>0</sup> \* 13<sup>0</sup> \* 17<sup>0</sup> \* …
 
-## 整除
+**因子**：12可以被3整除，那么3就是12的一个因子或者除数。
+
+**倍数**： A÷B=C，就可以说A是B的C倍。15能够被3或5整除，因此15是3的倍数，也是5的倍数。一个数的倍数有
+
+无数个。不能把一个数单独叫做倍数，只能说谁是谁的倍数。 
+
+**整除**
 
 令 x = 2<sup>m0</sup> \* 3<sup>m1</sup> \* 5<sup>m2</sup> \* 7<sup>m3</sup> \* 11<sup>m4</sup> \* …
 
@@ -42,26 +50,36 @@
 
 ## 最大公约数最小公倍数
 
-x 和 y 的最大公约数为：gcd(x,y) =  2<sup>min(m0,n0)</sup> \* 3<sup>min(m1,n1)</sup> \* 5<sup>min(m2,n2)</sup> \* ...
+**质因数分解法求最大公约数**：
 
-x 和 y 的最小公倍数为：lcm(x,y) =  2<sup>max(m0,n0)</sup> \* 3<sup>max(m1,n1)</sup> \* 5<sup>max(m2,n2)</sup> \* ...
+求24和60的最大公约数，先分解质因数，得24=2×2×2×3，60=2×2×3×5，24与60的全部公有的
 
-### 1. 生成素数序列
+质因数是2、2、3，它们的积是2×2×3=12，所以，（24，60）=12。 
 
-204\. Count Primes (Easy)
+**最小公倍数**： 最小公倍数为两数的乘积除以最大公约数。
 
-[Leetcode](https://leetcode.com/problems/count-primes/description/) / [力扣](https://leetcode-cn.com/problems/count-primes/description/)
+其他求法：把几个数先分别分解质因数，再把各数中的全部公有的质因数和独有的质因数提取出来连乘，所得
 
-埃拉托斯特尼筛法在每次找到一个素数时，将能被素数整除的数排除掉。
+的积就是这几个数的**最小公倍数**。
+
+例如：求6和15的最小公倍数。先分解质因数，得6=2×3，15=3×5，6和15的全部公有的质因数是3，6独有质因数
+
+是2，15独有的质因数是5，2×3×5=30。30里面包含6的全部质因数2和3，还包含了15的全部质因数3和5，且30
+
+是6和15的公倍数中最小的一个，所以[6，15]=30。 
+
+### 1. 计数质数
+
+简单：[204. 计数质数](https://leetcode-cn.com/problems/count-primes/)
+
+统计所有小于非负整数 *`n`* 的质数的数量。 **埃拉托斯特尼筛法**：在每次找到一个素数时，将能被素数整除的数排除掉。
 
 ```java
 public int countPrimes(int n) {
     boolean[] notPrimes = new boolean[n + 1];
     int count = 0;
     for (int i = 2; i < n; i++) {
-        if (notPrimes[i]) {
-            continue;
-        }
+        if (notPrimes[i]) continue;
         count++;
         // 从 i * i 开始，因为如果 k < i，那么 k * i 在之前就已经被去除过了
         for (long j = (long) (i) * i; j < n; j += i) {
@@ -72,27 +90,43 @@ public int countPrimes(int n) {
 }
 ```
 
-### 2. 最大公约数
+质朴解法，超时，时间 n 乘 根号 n，每次判断是否是质数的时间复杂度是根号n。
 
 ```java
-int gcd(int a, int b) {
-    return b == 0 ? a : gcd(b, a % b);
+public int countPrimes(int n) {
+     int cnt = 0;
+     for (int i = 2; i < n; i++) {
+         if (isPrime(i)) cnt++;
+     }
+     return cnt;
+ }
+private boolean isPrime(int num) {
+    int max = (int)Math.sqrt(num);
+    for (int i = 2; i <= max; i++) {
+        if (num % i == 0) return false;
+    }
+    return true;
 }
 ```
 
-最小公倍数为两数的乘积除以最大公约数。
+### 2. 最大公约数、最小公倍数
 
 ```java
-int lcm(int a, int b) {
-    return a * b / gcd(a, b);
-}
+int gcd(int a, int b) {	return b == 0 ? a : gcd(b, a % b); }
+//交换，并取余：60、24，  24、12，  12、0  return 12
+//若是输入：24、60，	  60、24，	24、12，	12、0
 ```
 
-### 3. 使用位操作和减法求解最大公约数
+**最小公倍数**为两数的乘积除以最大公约数。
 
-[编程之美：2.7](#)
+```java
+int lcm(int a, int b) { return a * b / gcd(a, b); }
+//6,15	的最大公约数是3，最小公倍数是90/3得30
+```
 
-对于 a 和 b 的最大公约数 f(a, b)，有：
+### 3. 奇偶乘除法求最大公约数
+
+对于 a 和 b 的最大公约数 f(a, b)，有：	[编程之美：2.7](#)
 
 - 如果 a 和 b 均为偶数，f(a, b) = 2\*f(a/2, b/2);
 - 如果 a 是偶数 b 是奇数，f(a, b) = f(a/2, b);
@@ -103,22 +137,13 @@ int lcm(int a, int b) {
 
 ```java
 public int gcd(int a, int b) {
-    if (a < b) {
-        return gcd(b, a);
-    }
-    if (b == 0) {
-        return a;
-    }
-    boolean isAEven = isEven(a), isBEven = isEven(b);
-    if (isAEven && isBEven) {
-        return 2 * gcd(a >> 1, b >> 1);
-    } else if (isAEven && !isBEven) {
-        return gcd(a >> 1, b);
-    } else if (!isAEven && isBEven) {
-        return gcd(a, b >> 1);
-    } else {
-        return gcd(b, a - b);
-    }
+    if (a < b) return gcd(b, a);//转换为b大a小
+    if (b == 0) return a;
+    boolean isAEven = isEven(a), isBEven = isEven(b);		//Even 偶数
+    if (isAEven && isBEven)		  return 2 * gcd(a >> 1, b >> 1);
+    else if (isAEven && !isBEven) return gcd(a >> 1, b);
+    else if (!isAEven && isBEven) return gcd(a, b >> 1);
+    else return gcd(b, a - b);
 }
 ```
 
@@ -126,206 +151,161 @@ public int gcd(int a, int b) {
 
 ### 1. 7 进制
 
-504\. Base 7 (Easy)
-
-[Leetcode](https://leetcode.com/problems/base-7/description/) / [504. 七进制数](https://leetcode-cn.com/problems/base-7/)
+简单：[504. 七进制数](https://leetcode-cn.com/problems/base-7/)
 
 ```js
-给定一个整数，将其转化为7进制，并以字符串形式输出。
-
-示例 1:
-
-输入: 100
-输出: "202"
-示例 2:
-
-输入: -7
-输出: "-10"
-注意: 输入范围是 [-1e7, 1e7] 。
+给定一个整数，将其转化为7进制，并以字符串形式输出。注意: 输入范围是 [-1e7, 1e7] 。
+输入: 100	输出: "202"
+输入: -7	输出: "-10"
 ```
 
 ```java
-class Solution {
-    public String convertToBase7(int num) {
-        if (num == 0) return "0";
-        StringBuilder sb = new StringBuilder();
-        boolean isNegative = num < 0;
-        if (isNegative) num = -num;
-        while (num > 0) {
-            sb.append(num % 7);
-            num /= 7;
-        }
-        String ret = sb.reverse().toString();
-        return isNegative ? "-" + ret : ret;
+public String convertToBase7(int num) {
+    if (num == 0) return "0";
+    StringBuilder sb = new StringBuilder();
+    boolean isNegative = num < 0;
+    if (isNegative) num = -num;
+    while (num > 0) {
+        sb.append(num % 7);
+        num /= 7;
     }
+    String ret = sb.reverse().toString();
+    return isNegative ? "-" + ret : ret;
 }
 ```
 
 Java 中 Integer 的 static String toString(int num, int radix) 可以将一个整数转换为 radix 进制表示的字符串。
 
 ```java
-public String convertToBase7(int num) {
-    return Integer.toString(num, 7);
-}
+public String convertToBase7(int num) { return Integer.toString(num, 7); }
 ```
 
 ### 2. 16 进制
 
-405\. Convert a Number to Hexadecimal (Easy)
-
-[Leetcode](https://leetcode.com/problems/convert-a-number-to-hexadecimal/description/) / [405. 数字转换为十六进制数](https://leetcode-cn.com/problems/convert-a-number-to-hexadecimal/)
+简单：[405. 数字转换为十六进制数](https://leetcode-cn.com/problems/convert-a-number-to-hexadecimal/)
 
 ```js
-给定一个整数，编写一个算法将这个数转换为十六进制数。对于负整数，我们通常使用 补码运算 方法。
-
-注意:
-十六进制中所有字母(a-f)都必须是小写。
-十六进制字符串中不能包含多余的前导零。如果要转化的数为0，那么以单个字符'0'来表示；对于其他情况，十六进制字符串中的第一个字符将不会是0字符。 
-给定的数确保在32位有符号整数范围内。
-不能使用任何由库提供的将数字直接转换或格式化为十六进制的方法。
-示例 1：
-
-输入:
-26
-输出:
-"1a"
-示例 2：
-
-输入:
--1
-输出:
-"ffffffff"
+给定一个整数，编写一个算法将这个数转换为十六进制数。对于负整数，负数要用它的补码形式。
+输入:26	输出:"1a"			输入: -1	输出: "ffffffff"
 ```
 
-负数要用它的补码形式。
+int整数一共32位，4位为一个十六进制，因此int可以转为8位16进制，小于8则没有转完。
+
+每次num和1111作与运算，得到的结果就是num的最后四位的十进制表示，从chars中查阅对应的十六进制拼接
 
 ```java
-class Solution {
-    public String toHex(int num) {
-        char[] map = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-        if (num == 0) return "0";
-        StringBuilder sb = new StringBuilder();
-        while (num != 0) {
-            sb.append(map[num & 0b1111]);
-            num >>>= 4; // 考虑到时补码形式，因此符号位就不能有特殊的意义，需要使用无符号右移，左边填 0
-        }
-        return sb.reverse().toString();
+public String toHex(int num) {
+    char[] map = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
+    if (num == 0) return "0";
+    StringBuilder sb = new StringBuilder();
+    while (num != 0) {
+        sb.append(map[num & 0b1111]);	//0b1111 是15，15的二进制是1111
+        num >>>= 4; // 考虑到时补码形式，因此符号位就不能有特殊的意义，需要使用无符号右移，左边填 0
     }
+    return sb.reverse().toString();
+}
+```
+
+```c++
+//C++的话，不管正负，统统转成无符号整型unsigned int类型，和下边进行一样的处理。0xf就是15
+string toHex(int num) {
+    if(num==0)  return "0";
+    string  mp = "0123456789abcdef";
+    int cnt=0;		   //右移动的次数，处理-1，负数
+    string res="";
+    while(num && cnt<8)//32位转换成16进制就是八位
+    {
+        res = mp[num&0xf]+res;//+res放到后边不用再对结果反转
+        num>>=4;
+        cnt++;
+    }
+    return res;
 }
 ```
 
 ### 3. 26 进制
 
-168\. Excel Sheet Column Title (Easy)
+简单：[168. Excel表列名称](https://leetcode-cn.com/problems/excel-sheet-column-title/)
 
-[Leetcode](https://leetcode.com/problems/excel-sheet-column-title/description/) / [168. Excel表列名称](https://leetcode-cn.com/problems/excel-sheet-column-title/)
-
-```html
-1 -> A
-2 -> B
-3 -> C
-...
-26 -> Z
-27 -> AA
-28 -> AB
+```js
+1 -> A、2 -> B、3 -> C ... 26 -> Z、27 -> AA、28 -> AB
+输入: 701	输出: "ZY"	26*26+25=676+25=701
 ```
 
 因为是从 1 开始计算的，而不是从 0 开始，因此需要对 n 执行 -1 操作。
 
 ```java
-给定一个正整数，返回它在 Excel 表中相对应的列名称。
-例如，
-    1 -> A
-    2 -> B
-    3 -> C
-    ...
-    26 -> Z
-    27 -> AA
-    28 -> AB 
-    ...
-示例 1:
-
-输入: 1
-输出: "A"
-示例 2:
-
-输入: 28
-输出: "AB"
-示例 3:
-
-输入: 701
-输出: "ZY"	26*26+25=676+25=701
-```
-
-```java
-//9ms，10%
-class Solution {
-    public String convertToTitle(int n) {
-        if (n == 0) return "";
-        n--;
-        return convertToTitle(n / 26) + (char) (n % 26 + 'A');
-    }
+public String convertToTitle(int n) {//9ms，10%
+    if (n == 0) return "";
+    n--;
+    return convertToTitle(n / 26) + (char) (n % 26 + 'A');
 }
 ```
 
 ```java
-//99%
-class Solution {
-    public String convertToTitle(int n) {
-        char[] c = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 
-                    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
-        StringBuilder sb = new StringBuilder();
-        while (n > 0) {
-            --n;							// 必须n--才能和数组对上号。
-            sb = sb.append(c[n % 26]);
-            n /= 26;
-        }
-        return sb.reverse().toString();
+public String convertToTitle(int n) {//99%，上边递归对应的循环版本
+    char[] c = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 
+                'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+    StringBuilder sb = new StringBuilder();
+    while (n > 0) {
+        --n;							// 必须n--才能和数组对上号。
+        sb = sb.append(c[n % 26]);
+        n /= 26;
     }
+    return sb.reverse().toString();
 }
 ```
 
 ```java
-class Solution {
-    public String convertToTitle(int n) {
-        StringBuilder sb = new StringBuilder();
-        while (n > 0) {
-            int diff = (n - 1) % 26;		//省去字符数组
-            n = (n - 1) / 26;
-            sb.append((char)('A' + diff));
-        }
-        return sb.reverse().toString();
+public String convertToTitle(int n) {
+    StringBuilder sb = new StringBuilder();
+    while (n > 0) {
+        int diff = (n - 1) % 26;		//省去字符数组
+        n = (n - 1) / 26;
+        sb.append((char)('A' + diff));
     }
+    return sb.reverse().toString();
 }
 ```
 
 ## 阶乘
 
-### 1. 统计阶乘尾部有多少个 0
+### 1. 阶乘结果尾部有多少个 0
 
-172\. Factorial Trailing Zeroes (Easy)
+简单：[172. 阶乘后的零](https://leetcode-cn.com/problems/factorial-trailing-zeroes/)
 
-[Leetcode](https://leetcode.com/problems/factorial-trailing-zeroes/description/) / [力扣](https://leetcode-cn.com/problems/factorial-trailing-zeroes/description/)
+时间要求优化到对数级别
 
-尾部的 0 由 2 * 5 得来，2 的数量明显多于 5 的数量，因此只要统计有多少个 5 即可。
+```
+输入: 3	输出: 0	解释: 3! = 6, 尾数中没有零。
+输入: 5	输出: 1	解释: 5! = 120, 尾数中有 1 个零
+输入: 7	输出: 1	解释：5040		输入: 8 输出: 1 解释：40320	输入: 10 输出:2 解释：3628800
+```
 
-对于一个数 N，它所包含 5 的个数为：N/5 + N/5<sup>2</sup> + N/5<sup>3</sup> + ...，其中 N/5 表示不大于 N 的数中 5 的倍数贡献一个 5，N/5<sup>2</sup> 表示不大于 N 的数中 5<sup>2</sup> 的倍数再贡献一个 5 ...。
+尾部的 0 由 2 * 5 得来，2 的数量明显多于 5 的数量，因此只要统计有多少个 5 这个因子有多少个即可。
+
+[详细通俗的思路分析 - 阶乘后的零 - 力扣（LeetCode） (leetcode-cn.com)](https://leetcode-cn.com/problems/factorial-trailing-zeroes/solution/xiang-xi-tong-su-de-si-lu-fen-xi-by-windliang-3/) 
+
+```java
+public int trailingZeroes(int n) { return n == 0 ? 0 : n / 5 + trailingZeroes(n / 5); }
+```
 
 ```java
 public int trailingZeroes(int n) {
-    return n == 0 ? 0 : n / 5 + trailingZeroes(n / 5);
+    int cnt = 0;
+    while (n != 0) {
+        cnt += n / 5;	// 25->5 5->1 实际25分解为2个5因子
+        n = n / 5;
+    }
+    return cnt;
 }
 ```
-
-如果统计的是 N! 的二进制表示中最低位 1 的位置，只要统计有多少个 2 即可，该题目出自 [编程之美：2.2](#) 。和求解有多少个 5 一样，2 的个数为 N/2 + N/2<sup>2</sup> + N/2<sup>3</sup> + ...
 
 ## 字符串加法减法
 
 ### 1. 二进制加法
 
-67\. Add Binary (Easy)
-
-[Leetcode](https://leetcode.com/problems/add-binary/description/) / [67. 二进制求和](https://leetcode-cn.com/problems/add-binary/)
+简单：[67. 二进制求和](https://leetcode-cn.com/problems/add-binary/)
 
 ```js
 给你两个二进制字符串，返回它们的和（用二进制表示）。
