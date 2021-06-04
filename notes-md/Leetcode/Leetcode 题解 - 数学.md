@@ -308,197 +308,128 @@ public int trailingZeroes(int n) {
 简单：[67. 二进制求和](https://leetcode-cn.com/problems/add-binary/)
 
 ```js
-给你两个二进制字符串，返回它们的和（用二进制表示）。
-输入为 非空 字符串且只包含数字 1 和 0。
-
-示例 1:
-
-输入: a = "11", b = "1"
-输出: "100"
-示例 2:
-
-输入: a = "1010", b = "1011"
-输出: "10101"
- 
-
-提示：
-每个字符串仅由字符 '0' 或 '1' 组成。
-1 <= a.length, b.length <= 10^4
-字符串如果不是 "0" ，就都不含前导零。
+给你两个二进制字符串，返回它们的和（用二进制表示）。输入为 非空 字符串且只包含数字 1 和 0。
+1 <= a.length, b.length <= 10^4		字符串如果不是 "0" ，就都不含前导零。
+输入: a = "1010", b = "1011"	输出: "10101"
 ```
 
 ```java
-//2ms,99%
-class Solution {
-    public String addBinary(String a, String b) {
-        int i = a.length() - 1, j = b.length() - 1, carry = 0;
-        StringBuilder sb = new StringBuilder();
-        while (carry == 1 || i >= 0 || j >= 0) {
-            if (i >= 0 && a.charAt(i--) == '1') carry++;
-            if (j >= 0 && b.charAt(j--) == '1') carry++;
-            sb.append(carry % 2);
-            carry /= 2;
-        }
-        return sb.reverse().toString();
+public String addBinary(String a, String b) {//2ms,99%
+    int i = a.length() - 1, j = b.length() - 1, carry = 0;
+    StringBuilder sb = new StringBuilder();
+    while (carry == 1 || i >= 0 || j >= 0) {		  //从后边开始
+        if (i >= 0 && a.charAt(i--) == '1') carry++;  //1010
+        if (j >= 0 && b.charAt(j--) == '1') carry++;  //1011
+        sb.append(carry % 2);						  //都是1的话，就会拼接0
+        carry /= 2;									  //都是1的话，c会再变为1
     }
+    return sb.reverse().toString();
 }
 ```
 
 ### 2. 字符串加法
 
-415\. Add Strings (Easy)
-
-[Leetcode](https://leetcode.com/problems/add-strings/description/) / [415. 字符串相加](https://leetcode-cn.com/problems/add-strings/)
+简单：[415. 字符串相加](https://leetcode-cn.com/problems/add-strings/)
 
 ```js
-给定两个字符串形式的非负整数 num1 和num2 ，计算它们的和。
-
-输入：
-"11"
-"123"
-输出：
-"134"	解释：123+11=134
-
-提示：
-num1 和num2 的长度都小于 5100
-num1 和num2 都只包含数字 0-9
-num1 和num2 都不包含任何前导零
+给定两个字符串形式的非负整数 num1 和num2 ，计算它们的和。num1 和num2 都不包含任何前导零
 你不能使用任何內建 BigInteger 库， 也不能直接将输入的字符串转换为整数形式
+输入："11" "123"  	 输出："134"	解释：123+11=134
 ```
 
-字符串的值为非负整数。
-
 ```java
-class Solution {
-    public String addStrings(String num1, String num2) {
-        StringBuilder sb = new StringBuilder();
-        int carry = 0, i = num1.length() - 1, j = num2.length() - 1;
-        while (carry == 1 || i >= 0 || j >= 0) {
-            int x = i < 0 ? 0 : num1.charAt(i--) - '0';//x<0的时候要刷新x的值，
-            int y = j < 0 ? 0 : num2.charAt(j--) - '0';//否则一直是num1.charAt(0)影响后续计算
-            sb.append((x + y + carry) % 10);
-            carry = (x + y + carry) / 10;
-        }
-        return sb.reverse().toString();
+public String addStrings(String num1, String num2) {
+    StringBuilder sb = new StringBuilder();
+    int carry = 0, i = num1.length() - 1, j = num2.length() - 1;
+    while (carry == 1 || i >= 0 || j >= 0) {
+        int x = i < 0 ? 0 : num1.charAt(i--) - '0';//x<0的时候要刷新x的值，为0
+        int y = j < 0 ? 0 : num2.charAt(j--) - '0';//否则一直是num1.charAt(0)影响后续计算
+        sb.append((x + y + carry) % 10);
+        carry = (x + y + carry) / 10;
     }
+    return sb.reverse().toString();
 }
 ```
 
 ## 相遇问题
 
-### 1. 改变数组元素使所有的数组元素都相等
+### 1. 编辑数组最少次使得元素都相等
 
-462\. Minimum Moves to Equal Array Elements II (Medium)
-
-[Leetcode](https://leetcode.com/problems/minimum-moves-to-equal-array-elements-ii/description/) / [462. 最少移动次数使数组元素相等 II](https://leetcode-cn.com/problems/minimum-moves-to-equal-array-elements-ii/)
+中等： [462. 最少移动次数使数组元素相等 II](https://leetcode-cn.com/problems/minimum-moves-to-equal-array-elements-ii/)
 
 ```js
 给定一个非空整数数组，找到使所有数组元素相等所需的最小移动数，其中每次移动可将选定的一个元素加1或减1。 
-您可以假设数组的长度最多为10000。
-
-例如:
-输入:
-[1,2,3]
-输出:
-2
-
-说明：
-只有两个动作是必要的（记得每一步仅可使其中一个元素加1或减1）： 
-[1,2,3]  =>  [2,2,3]  =>  [2,2,2]
+输入:[1,2,3]	输出:2	说明：[1,2,3]  =>  [2,2,3]  =>  [2,2,2]
 ```
 
-每次可以对一个数组元素加一或者减一，求最小的改变次数。
+题目概述：每次可以对一个数组元素加一或者减一，求最小的改变次数。
 
-这是个典型的相遇问题，移动距离最小的方式是所有元素都移动到中位数。
-
-理由如下：
+这是个典型的相遇问题，移动距离最小的方式是所有元素都移动到中位数。理由如下：
 
 设 m 为中位数。a 和 b 是 m 两边的两个元素，且 b \> a。要使 a 和 b 相等，它们总共移动的次数为 b - a，这个值等于 (b - m) + (m - a)，也就是把这两个数移动到中位数的移动次数。
 
 设数组长度为 N，则可以找到 N/2 对 a 和 b 的组合，使它们都移动到 m 的位置。
 
-**解法 1**  
-
-先排序，时间复杂度：O(NlogN)
+解法 1 ：先排序，时间复杂度：O(NlogN)
 
 ```java
-//2ms,99%
-class Solution {
-    public int minMoves2(int[] nums) {
-        Arrays.sort(nums);
-        int move = 0;
-        int l = 0, h = nums.length - 1;
-        while (l <= h) {
-            move += nums[h] - nums[l];
-            l++;
-            h--;
-        }
-        return move;
+public int minMoves2(int[] nums) {//2ms,99%
+    Arrays.sort(nums);
+    int move = 0;
+    int l = 0, h = nums.length - 1;
+    while (l <= h) {
+        move += nums[h] - nums[l];
+        l++;
+        h--;
     }
+    return move;
 }
 ```
 
-**解法 2**  
-
-使用快速选择找到中位数，时间复杂度 O(N)
+解法 2  ：使用快速选择找到中位数，时间复杂度 O(N)
 
 ```java
-//74ms,14%
-class Solution {
-    public int minMoves2(int[] nums) {
-        int move = 0;
-        int median = findKthSmallest(nums, nums.length / 2);
-        for (int num : nums) {
-            move += Math.abs(num - median);
-        }
-        return move;
+public int minMoves2(int[] nums) {//74ms,14%
+    int move = 0;
+    int median = findKthSmallest(nums, nums.length / 2);
+    for (int num : nums) {
+        move += Math.abs(num - median);
     }
-
-    private int findKthSmallest(int[] nums, int k) {
-        int l = 0, h = nums.length - 1;
-        while (l < h) {
-            int j = partition(nums, l, h);
-            if (j == k) {
-                break;
-            }
-            if (j < k) {
-                l = j + 1;
-            } else {
-                h = j - 1;
-            }
-        }
-        return nums[k];
+    return move;
+}
+private int findKthSmallest(int[] nums, int k) {
+    int l = 0, h = nums.length - 1;
+    while (l < h) {
+        int j = partition(nums, l, h);
+        if (j == k)  break;
+        if (j < k) l = j + 1;
+		else h = j - 1;
     }
-
-    private int partition(int[] nums, int l, int h) {
-        int i = l, j = h + 1;
-        while (true) {
-            while (nums[++i] < nums[l] && i < h) ;
-            while (nums[--j] > nums[l] && j > l) ;
-            if (i >= j) {
-                break;
-            }
-            swap(nums, i, j);
-        }
-        swap(nums, l, j);
-        return j;
+    return nums[k];
+}
+private int partition(int[] nums, int l, int h) {
+    int i = l, j = h + 1;
+    while (true) {
+        while (nums[++i] < nums[l] && i < h) ;
+        while (nums[--j] > nums[l] && j > l) ;
+        if (i >= j) break;
+        swap(nums, i, j);
     }
-
-    private void swap(int[] nums, int i, int j) {
-        int tmp = nums[i];
-        nums[i] = nums[j];
-        nums[j] = tmp;
-    }
+    swap(nums, l, j);
+    return j;
+}
+private void swap(int[] nums, int i, int j) {
+    int tmp = nums[i];
+    nums[i] = nums[j];
+    nums[j] = tmp;
 }
 ```
 
 ## 多数投票问题
 
-### 1. 数组中出现次数多于 n / 2 的元素
+### 1. 数组中过半的元素
 
-169\. Majority Element (Easy)
-
-[Leetcode](https://leetcode.com/problems/majority-element/description/) / [力扣](https://leetcode-cn.com/problems/majority-element/description/)
+简单： [169. 多数元素](https://leetcode-cn.com/problems/majority-element/)
 
 先对数组排序，最中间那个数出现次数一定多于 n / 2。
 
@@ -509,7 +440,7 @@ public int majorityElement(int[] nums) {
 }
 ```
 
-可以利用 Boyer-Moore Majority Vote Algorithm 来解决这个问题，使得时间复杂度为 O(N)。可以这么理解该算法：使用 cnt 来统计一个元素出现的次数，当遍历到的元素和统计元素不相等时，令 cnt--。如果前面查找了 i 个元素，且 cnt == 0，说明前 i 个元素没有 majority，或者有 majority，但是出现的次数少于 i / 2，因为如果多于 i / 2 的话 cnt 就一定不会为 0。此时剩下的 n - i 个元素中，majority 的数目依然多于 (n - i) / 2，因此继续查找就能找出 majority。
+可以利用 Boyer-Moore Majority Vote Algorithm 来解决这个问题，使得时间复杂度为 O(N)。
 
 ```java
 public int majorityElement(int[] nums) {
@@ -524,20 +455,15 @@ public int majorityElement(int[] nums) {
 
 ## 其它
 
-### 1. 平方数
+### 1. 判断平方数
 
-367\. Valid Perfect Square (Easy)
-
-[Leetcode](https://leetcode.com/problems/valid-perfect-square/description/) / [力扣](https://leetcode-cn.com/problems/valid-perfect-square/description/)
+简单： [367. 有效的完全平方数](https://leetcode-cn.com/problems/valid-perfect-square/)
 
 ```html
-Input: 16
-Returns: True
+Input: 16	Returns: True
 ```
 
-平方序列：1,4,9,16,..
-
-间隔：3,5,7,...
+平方序列：1,4,9,16,..		间隔：3,5,7,...
 
 间隔为等差数列，使用这个特性可以得到从 1 开始的平方序列。
 
@@ -552,23 +478,17 @@ public boolean isPerfectSquare(int num) {
 }
 ```
 
-### 2. 3 的 n 次方
+### 2. 判断 3 的 n 次方
 
-326\. Power of Three (Easy)
-
-[Leetcode](https://leetcode.com/problems/power-of-three/description/) / [力扣](https://leetcode-cn.com/problems/power-of-three/description/)
+简单： [326. 3的幂](https://leetcode-cn.com/problems/power-of-three/)
 
 ```java
-public boolean isPowerOfThree(int n) {
-    return n > 0 && (1162261467 % n == 0);
-}
+public boolean isPowerOfThree(int n) { return n > 0 && (1162261467 % n == 0); }
 ```
 
-### 3. 乘积数组
+### 3. 构建乘积数组
 
-238\. Product of Array Except Self (Medium)
-
-[Leetcode](https://leetcode.com/problems/product-of-array-except-self/description/) / [力扣](https://leetcode-cn.com/problems/product-of-array-except-self/description/)
+中等：[238. 除自身以外数组的乘积](https://leetcode-cn.com/problems/product-of-array-except-self/)
 
 ```html
 For example, given [1,2,3,4], return [24,12,8,6].
@@ -597,20 +517,19 @@ public int[] productExceptSelf(int[] nums) {
 }
 ```
 
-### 4. 找出数组中的乘积最大的三个数
+### 4. 数组中乘积最大的三个数
 
-628\. Maximum Product of Three Numbers (Easy)
-
-[Leetcode](https://leetcode.com/problems/maximum-product-of-three-numbers/description/) / [力扣](https://leetcode-cn.com/problems/maximum-product-of-three-numbers/description/)
+简单： [628. 三个数的最大乘积](https://leetcode-cn.com/problems/maximum-product-of-three-numbers/)
 
 ```html
-Input: [1,2,3,4]
-Output: 24
+Input: [1,2,3,4] Output: 24		数组存在负数
 ```
+
+可以数组排序后，求出三个最大正数的乘积、两个最小负数与最大正数的乘积，二者之间的最大值即为所求答案。 
 
 ```java
 public int maximumProduct(int[] nums) {
-    int max1 = Integer.MIN_VALUE, max2 = Integer.MIN_VALUE, max3 = Integer.MIN_VALUE, min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
+    int max1 = Integer.MIN_VALUE, max2 = Integer.MIN_VALUE, max3 = Integer.MIN_VALUE, min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;//最小的、第二小的
     for (int n : nums) {
         if (n > max1) {
             max3 = max2;
