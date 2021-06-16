@@ -1,4 +1,4 @@
-Leetcode 题解 - 动态规划
+# Leetcode 题解 - 动态规划
 
 <!-- GFM-TOC -->
 * [Leetcode 题解 - 动态规划](#leetcode-题解---动态规划)
@@ -26,113 +26,73 @@ Leetcode 题解 - 动态规划
 
 ### 1. 爬楼梯
 
-70\. Climbing Stairs (Easy)
-
-[Leetcode](https://leetcode.com/problems/climbing-stairs/description/) / [70. 爬楼梯](https://leetcode-cn.com/problems/climbing-stairs/)
+简单：[70. 爬楼梯](https://leetcode-cn.com/problems/climbing-stairs/)
 
 题目描述：有 N 阶楼梯，每次可以上一阶或者两阶，求有多少种上楼梯的方法。
 
-定义一个数组 dp 存储上楼梯的方法数（为了方便讨论，数组下标从 1 开始），dp[i] 表示走到第 i 个楼梯的方法数目。
-
-第 i 个楼梯可以从第 i-1 和 i-2 个楼梯再走一步到达，走到第 i 个楼梯的方法数为走到第 i-1 和第 i-2 个楼梯的方法数之和。
-
-<!--<div align="center"><img src="https://latex.codecogs.com/gif.latex?dp[i]=dp[i-1]+dp[i-2]" class="mathjax-pic"/></div> <br>-->
-
-<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/14fe1e71-8518-458f-a220-116003061a83.png" width="200px"> </div><br>
-考虑到 dp[i] 只与 dp[i - 1] 和 dp[i - 2] 有关，因此可以只用两个变量来存储 dp[i - 1] 和 dp[i - 2]，使得原来的 O(N) 空间复杂度优化为 O(1) 复杂度。
-
 ```java
-class Solution {
-    public int climbStairs(int n) {
-        if (n <= 2) {
-            return n;
-        }
-        int pre2 = 1, pre1 = 2;
-        for (int i = 2; i < n; i++) {
-            int cur = pre1 + pre2;
-            pre2 = pre1;
-            pre1 = cur;
-        }
-        return pre1;
+public int climbStairs(int n) {
+    if (n <= 2) return n;
+    int pre2 = 1, pre1 = 2;
+    for (int i = 2; i < n; i++) {
+        int cur = pre1 + pre2;
+        pre2 = pre1;
+        pre1 = cur;
     }
+    return pre1;
 }
 ```
 
-### 2. 强盗抢劫
+### 2. 打家劫舍基础版
 
-198\. House Robber (Easy)
+中等：[198. 打家劫舍](https://leetcode-cn.com/problems/house-robber/)
 
-[Leetcode](https://leetcode.com/problems/house-robber/description/) / [198. 打家劫舍](https://leetcode-cn.com/problems/house-robber/)
+](https://leetcode-cn.com/problems/house-robber/)
 
 题目描述：抢劫一排住户，但是不能抢邻近的住户，求最大抢劫量。
 
-定义 dp 数组用来存储最大的抢劫量，其中 dp[i] 表示抢到第 i 个住户时的最大抢劫量。
+```
+方程：dp[i]=max(dp[i−2]+nums[i],dp[i−1])
+```
 
-由于不能抢劫邻近住户，如果抢劫了第 i -1 个住户，那么就不能再抢劫第 i 个住户，所以
-
-<!--<div align="center"><img src="https://latex.codecogs.com/gif.latex?dp[i]=max(dp[i-2]+nums[i],dp[i-1])" class="mathjax-pic"/></div> <br>-->
-
-<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/2de794ca-aa7b-48f3-a556-a0e2708cb976.jpg" width="350px"> </div><br>
 ```java
-class Solution {
-    public int rob(int[] nums) {
-        int pre2 = 0, pre1 = 0;
-        for (int i = 0; i < nums.length; i++) {
-            int cur = Math.max(pre2 + nums[i], pre1);
-            pre2 = pre1;
-            pre1 = cur;
-        }
-        return pre1;
+public int rob(int[] nums) {
+    int pre2 = 0, pre1 = 0;
+    for (int i = 0; i < nums.length; i++) {
+        int cur = Math.max(pre2 + nums[i], pre1);
+        pre2 = pre1;
+        pre1 = cur;
     }
+    return pre1;
 }
 ```
 
-### 3. 强盗在环形街区抢劫
+### 3. 环形打家劫舍
 
-213\. House Robber II (Medium)
-
-[Leetcode](https://leetcode.com/problems/house-robber-ii/description/) / [213. 打家劫舍 II](https://leetcode-cn.com/problems/house-robber-ii/)
+中等： [213. 打家劫舍 II](https://leetcode-cn.com/problems/house-robber-ii/)
 
 ```js
-这个地方所有的房屋都 围成一圈 ，这意味着第一个房屋和最后一个房屋是紧挨着的。同时，相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警。
-给定一个代表每个房屋存放金额的非负整数数组，计算你 在不触动警报装置的情况下 ，能够偷窃到的最高金额。
-#也就是数组是循环的。
-
-示例 1：
-
-输入：nums = [2,3,2]
-输出：3
-解释：你不能先偷窃 1 号房屋（金额 = 2），然后偷窃 3 号房屋（金额 = 2）, 因为他们是相邻的。
-示例 2：
-
-输入：nums = [1,2,3,1]
-输出：4
-解释：可以先偷窃 1 号房屋（金额 = 1），然后偷窃 3 号房屋（金额 = 3）。偷窃到的最高金额 = 1 + 3 = 4 。
+输入：nums = [2,3,2]	输出：3	解释：数组是循环的，1和3是相邻的不能都偷
 ```
 
-```java
-class Solution {
-    public int rob(int[] nums) {
-        if (nums == null || nums.length == 0) {
-            return 0;
-        }
-        int n = nums.length;
-        if (n == 1) {
-            return nums[0];
-        }
-        // 先保证n - 2有意义，再处理环形。分别处理0到倒数第二个，1到倒数第一个就是最后一个。处理两次
-        return Math.max(rob(nums, 0, n - 2), rob(nums, 1, n - 1));
-    }
+思路：先保证n - 2有意义，再处理环形。分别处理0到倒数第二个，1到倒数第一个就是最后一个。处理两次
 
-    private int rob(int[] nums, int first, int last) {
-        int pre2 = 0, pre1 = 0;
-        for (int i = first; i <= last; i++) {//这里是等于，i <= last
-            int cur = Math.max(pre1, pre2 + nums[i]);
-            pre2 = pre1;
-            pre1 = cur;
-        }
-        return pre1;
+```java
+public int rob(int[] nums) {
+    if (nums == null || nums.length == 0) return 0;
+    int n = nums.length;
+    if (n == 1)  return nums[0];
+    return Math.max(rob(nums, 0, n - 2), rob(nums, 1, n - 1));
+}
+
+private int rob(int[] nums, int first, int last) {
+    int pre2 = 0, pre1 = 0;
+    for (int i = first; i <= last; i++) {//这里是等于，i <= last
+        int cur = Math.max(pre1, pre2 + nums[i]);
+        pre2 = pre1;
+        pre1 = cur;
     }
+    return pre1;
 }
 ```
 
@@ -154,27 +114,14 @@ class Solution {
 <div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/da1f96b9-fd4d-44ca-8925-fb14c5733388.png" width="350px"> </div><br>
 因此，D(n) = (n - 1) (D(n - 2) + D(n - 1))，特别地，有D(1) = 0, D(2) = 1。 
 
-参考
-
-力扣会员题目：[Leetcode] 634. Find the Derangement of An Array 解题报告
-
-https://blog.csdn.net/magicbean2/article/details/79112988
-
-优化参考：【Leetcode】634. Find the Derangement of An Array
-
-https://blog.csdn.net/qq_46105170/article/details/113707003
-
-题目
-
+```
 在组合数学中，排列是一组元素的排列，因此没有元素出现在其原始位置。
-
 最初有一个数组，其中包含从1到n的n个整数，按升序排列，您需要找到它可以产生的排列数。
-
 另外，由于答案可能非常大，因此您应该返回输出 mod 109 + 7。
+例如，输入：[1,2,3]	输出：两个排列分别是[2,3,1]和[3,1,2]。
+```
 
-
-
-思路：
+思路：力扣会员的题目，题解： [Leetcode 634. Find the Derangement of An Array](https://blog.csdn.net/qq_46105170/article/details/113707003) 
 
 组合数学中的错排问题。当n个编号元素放在n个编号位置，元素编号与位置编号各不对应的方法数用D(n)表示。
 
@@ -190,41 +137,25 @@ https://blog.csdn.net/qq_46105170/article/details/113707003
 
 因此，D(n) = (n - 1) (D(n - 2) + D(n - 1))，特别地，有D(1) = 0, D(2) = 1。于是，这道题目就变成了动态规划。
 
-
-
-范例1：
-
-输入：3				2			1
-
-输出：2				1			0
-
-说明：原始数组为[1,2,3]。 这两个排列分别是[2,3,1]和[3,1,2]。
-
 ```java
-class Solution {
-    public static void main(String[] args) {
-        System.out.println(findDerangement(3));
+public static void main(String[] args) {
+    System.out.println(findDerangement(3));
+}
+public static int findDerangement(int n) {
+    long pre2 = 0, pre1 = 1;
+    long ret = (n == 1) ? 0 : 1;
+    for (int i = 3; i <= n; ++i) {
+        ret = ((i - 1) * (pre1 + pre2)) % 1000000007;
+        pre2 = pre1;
+        pre1 = ret;
     }
-    public static int findDerangement(int n) {
-        long pre2 = 0, pre1 = 1;
-        long ret = (n == 1) ? 0 : 1;
-        for (int i = 3; i <= n; ++i) {
-            ret = ((i - 1) * (pre1 + pre2)) % 1000000007;
-            pre2 = pre1;
-            pre1 = ret;
-        }
-        return (int)ret;
-    }
+    return (int)ret;
 }
 ```
 
 ### 5. 母牛生产
 
-[程序员代码面试指南-P181](#)
-
-题目描述：
-
-假设农场中成熟的母牛每年都会生 1 头小母牛，并且永远不会死。
+题目描述：假设农场中成熟的母牛每年都会生 1 头小母牛，并且永远不会死。
 
 第一年有 1 只小母牛，从第二年开始，母牛开始生小母牛。
 
@@ -235,39 +166,30 @@ class Solution {
 <!--<div align="center"><img src="https://latex.codecogs.com/gif.latex?dp[i]=dp[i-1]+dp[i-3]" class="mathjax-pic"/></div> <br>-->
 
 <div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/879814ee-48b5-4bcb-86f5-dcc400cb81ad.png" width="250px"> </div><br>
-参考：https://blog.csdn.net/weixin_30832143/article/details/96741056
+参考： [动态规划（斐波那契系列）---母牛生产_weixin_30832143的博客-CSDN博客](https://blog.csdn.net/weixin_30832143/article/details/96741056) 
 
 ```java
 public  int cowNums(int n){
     int[] dp=new int [n+1];
-    if(n==0)
-        return 0;
-    if(n==1)
-        return 1;
-    if(n==2)
-        return 2;
-    if(n==3)
-        return 3;
+    if(n==0) return 0;
+    if(n==1) return 1;
+    if(n==2) return 2;
+    if(n==3) return 3;
     dp[0]=0;
     dp[1]=1;
     dp[2]=2;
     dp[3]=3;
-    for(int i=4;i<=n;i++){
+    for(int i=4;i<=n;i++)
         dp[i]=dp[i-1]+dp[i-3];
-    }
     return dp[n];
 }
 ```
 
-变式参考：[母牛生小牛问题](https://www.cnblogs.com/AndyJee/p/4457411.html)
+变式题目参考：[母牛生小牛问题](https://www.cnblogs.com/AndyJee/p/4457411.html)
 
-题目：
+题目描述：一头刚出生的小母牛，4年后生一头小母牛，以后每年生一头，现有一头，问20年后共有多少头牛？
 
-一头刚出生的小母牛，4年后生一头小母牛，以后每年生一头，现有一头刚出生的小母牛，问20年后共有多少头牛？
-
-思路：
-
-列举前n年的情况：1、1、1、2、3、4、6、8、11。。。
+列举前n年的情况：1、1、1、2、3、4、6、8、11 .....
 
 将规律抽象成公式：F(1)=1	F(2)=1	F(3)=1	**F(n)=F(n-1)+F(n-3)** 
 
@@ -278,15 +200,12 @@ F(n-1):表示第n-1年共有多少头牛
 F(n-3):表示第(n-3)年出生的母牛在第n年生的小母牛数
 
 ```java
-// recursive method
-int NumOfCow(int n){
-    if(n<=3)
-        return 1;
+int NumOfCow(int n){		// recursive method
+    if(n<=3) return 1;
     return NumOfCow(n-1)+NumOfCow(n-3);
 }
 
-// dynamic programming method
-int NumOfCow2(int n){
+int NumOfCow2(int n){		// dynamic programming method
     int num[n+1];
     for(int i=1;i<=n;i++){
         if(i<=3) num[i]=1;
@@ -296,80 +215,45 @@ int NumOfCow2(int n){
 }
 ```
 
-变形：假设母牛只有十年寿命，那么**减去十年前出生的母牛数量即可**。 
+题目变形：假设母牛只有十年寿命，那么**减去十年前出生的母牛数量即可**。 
 
-参考：LeetCode刷题之动态规划（一）：https://juejin.cn/post/6844904023196172295#heading-5
+题目变形参考： [LeetCode刷题之动态规划（一） (juejin.cn)](https://juejin.cn/post/6844904023196172295#heading-5) 
 
 ## 矩阵路径
 
 ### 1. 矩阵的最小路径和
 
-64\. Minimum Path Sum (Medium)
-
-[Leetcode](https://leetcode.com/problems/minimum-path-sum/description/) / [64. 最小路径和](https://leetcode-cn.com/problems/minimum-path-sum/)
+中等：[64. 最小路径和](https://leetcode-cn.com/problems/minimum-path-sum/)
 
 <img src="../../assets/1618372124050.png" alt="1618372124050" style="zoom: 33%;" />
 
 ```js
-给定一个包含非负整数的 m x n 网格 grid ，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。
-说明：每次只能向下或者向右移动一步。
-
-示例 1：
-输入：grid = [[1,3,1],
-             [1,5,1],
-             [4,2,1]]
-输出：7
-解释：因为路径 1→3→1→1→1 的总和最小。
-
-示例 2：
-输入：grid = [[1,2,3],
-             [4,5,6]]
-输出：12
- 
-提示：
-m == grid.length
-n == grid[i].length
-1 <= m, n <= 200
-0 <= grid[i][j] <= 100
+题目描述：求从矩阵的左上角到右下角的最小路径和，每次只能 向右 和 向下 移动。
+状态解释：dp[i][j]表示从grid[0][0]到grid[i - 1][j - 1]时的最大价值
 ```
 
-题目描述：求从矩阵的左上角到右下角的最小路径和，每次只能**向右和向下**移动。
-
-多开一行数组简化代码
-
 ```java
-class Solution {
-    public int maxValue(int[][] grid) {
-        int row = grid.length;
-        int column = grid[0].length;
-        //dp[i][j]表示从grid[0][0]到grid[i - 1][j - 1]时的最大价值
-        int[][] dp = new int[row + 1][column + 1];
-        for (int i = 1; i <= row; i++) {
-            for (int j = 1; j <= column; j++) {
-                dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]) + grid[i - 1][j - 1];
-            }
-        }
-        return dp[row][column];
-    }
+public int maxValue(int[][] grid) {							 //未空间优化
+    int row = grid.length;	
+    int column = grid[0].length;							 
+    int[][] dp = new int[row + 1][column + 1];				 //多开一行数组简化代码
+    for (int i = 1; i <= row; i++) 
+        for (int j = 1; j <= column; j++) 
+            dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]) + grid[i - 1][j - 1];
+    return dp[row][column];
 }
 ```
 
 ```java
 public int minPathSum(int[][] grid) {
-    if (grid.length == 0 || grid[0].length == 0) {
-        return 0;
-    }
+    if (grid.length == 0 || grid[0].length == 0) return 0;	 //空间优化到一维
     int m = grid.length, n = grid[0].length;
     int[] dp = new int[n];
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
-            if (j == 0) {
-                dp[j] = dp[j];        // 只能从上侧走到该位置		dp[j]就代表上侧
-            } else if (i == 0) {
-                dp[j] = dp[j - 1];    // 只能从左侧走到该位置
-            } else {
-                dp[j] = Math.min(dp[j - 1], dp[j]);			//上测、左侧取最小
-            }
+            if (j == 0) dp[j] = dp[j];					 	 //只能从上侧走到该位置
+            else if (i == 0) dp[j] = dp[j - 1];    			 //只能从左侧走到该位置
+            else dp[j] = Math.min(dp[j - 1], dp[j]);		 //上测、左侧取最小
             dp[j] += grid[i][j];
         }
     }
@@ -377,87 +261,23 @@ public int minPathSum(int[][] grid) {
 }
 ```
 
-类似题目，参考：剑指 47、礼物的最大值，只是改了一下最大值和最小值。上边是一个空间优化。
+### 2. 矩阵的不同路径数
 
-```java
-class Solution {
-    public int minPathSum(int[][] grid) {
-        if (grid.length == 0 || grid[0].length == 0) {
-            return 0;
-        }
-        int m = grid.length, n = grid[0].length;
-        int[] dp = new int[n];
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if(i == 0 && j == 0) continue;				//左上角跳过
-                if(i == 0) grid[i][j] += grid[i][j - 1] ;	//第一行dp[i][j]=d[i][j-1]
-                else if(j == 0) grid[i][j] += grid[i - 1][j];
-                else grid[i][j] += Math.min(grid[i][j - 1], grid[i - 1][j]);
-            }
-        }
-        return grid[m - 1][n - 1];
-    }
-}
-```
-
-原数组不让改变的话，每次只需要上一层的结果的话，空间内存可以再优化一下 。
-
-```java
-class Solution {
-    public int maxValue(int[][] grid) {
-        int[] dp = new int[grid[0].length];
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[0].length; j++) {
-                if (j == 0) dp[j] += grid[i][j];//第一列
-                else dp[j] = Math.max(dp[j - 1], dp[j]) + grid[i][j];
-            }
-        }
-        return dp[dp.length - 1];
-    }
-}
-```
-
-
-
-### 2. 矩阵的总路径数
-
-62\. Unique Paths (Medium)
-
-[Leetcode](https://leetcode.com/problems/unique-paths/description/) / [62. 不同路径](https://leetcode-cn.com/problems/unique-paths/)
+中等： [62. 不同路径](https://leetcode-cn.com/problems/unique-paths/)
 
 题目描述：统计从矩阵左上角到右下角的路径总数，每次只能向右或者向下移动。
 
-<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/dc82f0f3-c1d4-4ac8-90ac-d5b32a9bd75a.jpg" width=""> </div><br>
+<img src="../../../ZJW-Summary/assets/1623518594230.png" alt="1623518594230" style="zoom:33%;" />
+
 ```
-输入：m = 3, n = 7
-输出：28
-
-输入：m = 3, n = 2
-输出：3
-解释：
-从左上角开始，总共有 3 条路径可以到达右下角。
-1. 向右 -> 向下 -> 向下
-2. 向下 -> 向下 -> 向右
-3. 向下 -> 向右 -> 向下
-
-输入：m = 7, n = 3
-输出：28
-
-输入：m = 3, n = 3
-输出：6
+输入：m = 3, n = 7	输出：28	输入：m = 3, n = 2	输出：3	输入：m = 7, n = 3
 ```
 
-题解
-
-参考：https://leetcode-cn.com/problems/unique-paths/solution/dong-tai-gui-hua-by-powcai-2/
-
-这是个[杨辉三角形](https://www.mathsisfun.com/pascals-triangle.html)，每个位置的路径 = 该位置左边的路径 + 该位置上边的路径 
-
-
+题解参考： [Loading Question... - 力扣（LeetCode） (leetcode-cn.com)](https://leetcode-cn.com/problems/unique-paths/solution/dong-tai-gui-hua-by-powcai-2/) 
 
 **排列组合思路**
 
-![1617450568548](../../assets/1617450568548.png)
+<img src="../../assets/1617450568548.png" alt="1617450568548" style="zoom:67%;" />
 
 可以直接用数学公式求解，这是一个组合问题。机器人总共移动的次数 S=m+n-2，向下移动的次数 D=m-1，那么问题可以看成从 S 中取出 D 个位置的组合数量，这个问题的解为 C(S, D)。
 
@@ -466,92 +286,54 @@ public int uniquePaths(int m, int n) {
     int S = m + n - 2;  // 总共的移动次数
     int D = m - 1;      // 向下的移动次数
     long ret = 1;
-    for (int i = 1; i <= D; i++) {
+    for (int i = 1; i <= D; i++) 
         ret = ret * (S - D + i) / i;
-    }
     return (int) ret;
 }
 ```
 
-**动态规划** 
+动态规划实际和[杨辉三角形](https://www.mathsisfun.com/pascals-triangle.html)的求法一样，每个位置的路径 = 该位置左边的路径 + 该位置上边的路径。
 
-我们令dp\[i][j]是到达i，j最多路径
+状态定义：dp\[i][j]是到达i，j最多路径，**动态方程:dp\[i][j] = dp\[i-1][j] + dp\[i][j-1]**
 
-**动态方程:dp\[i][j] = dp\[i-1][j] + dp\[i][j-1]**
-
-注意，对于第一行|dp\[o][j]，或者第一列dp\[i][0]，由于都是在边界，所以只能为1
-
-时间复杂度:O(m * 7)
-
-空间复杂度:O(m * 7)
-
-优化:因为我们每次只需要dp\[i-1][j, dp\[i][j-1]
-
-所以我们只要记录这两个数，直接看代码吧!
-
-```java
-class Solution {
-    public int uniquePaths(int m, int n) {
-        int[][] dp = new int[m][n];
-        for (int i = 0; i < n; i++) dp[0][i] = 1;
-        for (int i = 0; i < m; i++) dp[i][0] = 1;
-        for (int i = 1; i < m; i++) {
-            for (int j = 1; j < n; j++) {
-                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
-            }
-        }
-        return dp[m - 1][n - 1];  
-    }
-}
-```
-
-空间优化到O(N)
+初始化：对于第一行dp\[0][j]，或者第一列dp\[i][0]，由于都是在边界，所以只能为1
 
 ```java
 public int uniquePaths(int m, int n) {
-    int[] dp = new int[n];//和列大小一样
+    int[][] dp = new int[m][n];
+    for (int i = 0; i < n; i++) dp[0][i] = 1;
+    for (int i = 0; i < m; i++) dp[i][0] = 1;
+    for (int i = 1; i < m; i++) 
+        for (int j = 1; j < n; j++) 
+            dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+    return dp[m - 1][n - 1];  
+}
+```
+
+```java
+public int uniquePaths(int m, int n) {		//空间优化到一维
+    int[] dp = new int[n];					//和列大小一样
     Arrays.fill(dp, 1);
-    for (int i = 1; i < m; i++) {
-        for (int j = 1; j < n; j++) {
+    for (int i = 1; i < m; i++) 
+        for (int j = 1; j < n; j++) 
             dp[j] = dp[j] + dp[j - 1];		//dp[j]就代表上边
-        }
-    }
     return dp[n - 1];
 }
 ```
 
 ## 数组区间
 
-### 1. 数组区间和
+### 1. 数组的区间和
 
-303\. Range Sum Query - Immutable (Easy)
-
-[Leetcode](https://leetcode.com/problems/range-sum-query-immutable/description/) / [303. 区域和检索 - 数组不可变](https://leetcode-cn.com/problems/range-sum-query-immutable/)
+简单：[303. 区域和检索 - 数组不可变](https://leetcode-cn.com/problems/range-sum-query-immutable/)
 
 ```js
-给定一个整数数组  nums，求出数组从索引 i 到 j（i ≤ j）范围内元素的总和，包含 i、j 两点。
-实现 NumArray 类：
-NumArray(int[] nums) 使用数组 nums 初始化对象
-int sumRange(int i, int j) 返回数组 nums 从索引 i 到 j（i ≤ j）范围内元素的总和，包含 i、j 两点（也就是 sum(nums[i], nums[i + 1], ... , nums[j])）
-
-示例：
-输入：
-["NumArray", "sumRange", "sumRange", "sumRange"]
-[[[-2, 0, 3, -5, 2, -1]], [0, 2], [2, 5], [0, 5]]
-输出：
-[null, 1, -1, -3]
-
-解释：
-NumArray numArray = new NumArray([-2, 0, 3, -5, 2, -1]);
+输入：["NumArray","sumRange","sumRange","sumRange"]  //NumArray和sumRange一个类的两个方法
+[[[-2, 0, 3, -5, 2, -1]], [0, 2], [2, 5], [0, 5]]	输出：[null, 1, -1, -3]
+解释：NumArray numArray = new NumArray([-2, 0, 3, -5, 2, -1]);
 numArray.sumRange(0, 2); // return 1 ((-2) + 0 + 3)
 numArray.sumRange(2, 5); // return -1 (3 + (-5) + 2 + (-1)) 
 numArray.sumRange(0, 5); // return -3 ((-2) + 0 + 3 + (-5) + 2 + (-1))
-
-提示：
-0 <= nums.length <= 104
--105 <= nums[i] <= 105
-0 <= i <= j < nums.length
-最多调用 104 次 sumRange 方法
 ```
 
 将前缀和数组sums的长度设为n + 1的目的是为了方便计算sumRange(i,j),不需要对i = 0的情况特殊处理。
@@ -563,7 +345,7 @@ numArray.sumRange(0, 5); // return -3 ((-2) + 0 + 3 + (-5) + 2 + (-1))
 ```java
 class NumArray {
     int[] sums;
-
+    
     public NumArray(int[] nums) {
         int n = nums.length;	// 	      原来nums = [1, 2, 3, 4,  5,  6]
         sums = new int[n + 1];	//构造sums[n+1]值为[0, 1, 3, 6, 10, 15,21]
@@ -582,9 +364,7 @@ class NumArray {
 
 ### 2. 数组中等差递增子区间的个数
 
-413\. Arithmetic Slices (Medium)
-
-[Leetcode](https://leetcode.com/problems/arithmetic-slices/description/) / [413. 等差数列划分](https://leetcode-cn.com/problems/arithmetic-slices/)
+中等： [413. 等差数列划分](https://leetcode-cn.com/problems/arithmetic-slices/)
 
 ```js
 如果一个数列至少有三个元素，并且任意两个相邻元素之差相同，则称该数列为#等差数列。
@@ -650,24 +430,16 @@ dp[i] 表示以 A[i] 为结尾的等差递增子区间的个数。
 因为递增子区间不一定以最后一个元素为结尾，可以是任意一个元素结尾，因此需要返回 dp 数组累加的结果。
 
 ```java
-class Solution {
-    public int numberOfArithmeticSlices(int[] A) {
-        if (A == null || A.length == 0) {
-            return 0;
-        }
-        int n = A.length;
-        int[] dp = new int[n];
-        for (int i = 2; i < n; i++) {
-            if (A[i] - A[i - 1] == A[i - 1] - A[i - 2]) {
-                dp[i] = dp[i - 1] + 1;
-            }
-        }
-        int total = 0;
-        for (int cnt : dp) {
-            total += cnt;
-        }
-        return total;
-    }
+public int numberOfArithmeticSlices(int[] A) {
+    if (A == null || A.length == 0) return 0;
+    int n = A.length;
+    int[] dp = new int[n];
+    for (int i = 2; i < n; i++)
+        if (A[i] - A[i - 1] == A[i - 1] - A[i - 2])
+            dp[i] = dp[i - 1] + 1;
+    int total = 0;
+    for (int cnt : dp) total += cnt;
+    return total;
 }
 ```
 
